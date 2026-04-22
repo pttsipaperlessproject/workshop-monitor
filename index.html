@@ -56,7 +56,7 @@
             color: #fff;
             text-align: center;
             border-radius: 12px;
-            padding: 16px;
+            padding: 166px;
             position: fixed;
             z-index: 100;
             left: 50%;
@@ -79,16 +79,31 @@
             from {bottom: 30px; opacity: 1;}
             to {bottom: 0; opacity: 0;}
         }
+
+        .btn-main {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+            background-color: #1e40af;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center p-4 sm:p-8">
 
     <main class="w-full max-w-5xl glass-panel p-6 sm:p-10 rounded-3xl shadow-2xl relative fade-in">
+        
+        <!-- Tombol Kembali ke Halaman Utama -->
+        <a href="https://pttsipaperlessproject2.netlify.app/" class="btn-main absolute top-6 right-6 flex items-center gap-2 px-5 py-2.5 bg-blue-800 text-white rounded-xl shadow-lg font-bold text-[10px] uppercase tracking-wider z-50">
+            <i data-lucide="home" class="w-4 h-4"></i>
+            Halaman Utama
+        </a>
+
         <!-- Header Section -->
         <header id="mainHeader" class="w-full mb-10 pb-6 border-b-2 border-slate-100 flex flex-col items-center">
             <div class="mb-4">
-                <div class="w-24 h-24 flex items-center justify-center bg-white rounded-2xl shadow-sm overflow-hidden p-2">
-                    <!-- Menggunakan default_logo.png dari folder yang sama -->
+                <div class="w-24 h-24 flex items-center justify-center bg-white rounded-2xl shadow-sm overflow-hidden p-2 border border-slate-50">
                     <img src="default_logo.png" alt="Logo PT TSI" class="w-full h-full object-contain" onerror="this.src='https://ui-avatars.com/api/?name=TSI&background=1E3A8A&color=fff&bold=true'">
                 </div>
             </div>
@@ -185,7 +200,6 @@
             }
         };
 
-        // Fungsi Helper untuk Parsing CSV sederhana
         function parseCSV(csvText) {
             const lines = csvText.split(/\r?\n/);
             return lines.filter(line => line.trim() !== "").map(line => {
@@ -197,11 +211,9 @@
             const config = SOURCES[viewId];
             const container = document.getElementById('contentDisplay');
             
-            // UI Update: Active Menu
             document.querySelectorAll('.menu-card').forEach(m => m.classList.remove('active-menu'));
             document.getElementById(`menu-${viewId}`).classList.add('active-menu');
 
-            // Show Loading
             container.innerHTML = `
                 <div class="flex items-center justify-center p-20 animate-pulse">
                     <div class="text-center">
@@ -286,7 +298,8 @@
 
         function showToast(message) {
             const t = document.getElementById("toast");
-            document.getElementById("toastMsg").innerText = message;
+            const msg = document.getElementById("toastMsg");
+            if (msg) msg.innerText = message;
             t.classList.add("show");
             setTimeout(() => t.classList.remove("show"), 3000);
         }
