@@ -49,35 +49,46 @@
             border-bottom-color: #D97706 !important;
         }
 
+        /* Toast UI yang diperkecil & lebih profesional */
         #toast {
             visibility: hidden;
-            min-width: 300px;
-            background-color: #1e293b;
+            min-width: 240px;
+            background-color: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(4px);
             color: #fff;
             text-align: center;
-            border-radius: 12px;
-            padding: 166px;
+            border-radius: 10px;
+            padding: 10px 20px;
             position: fixed;
             z-index: 100;
             left: 50%;
-            bottom: 30px;
+            bottom: 40px;
             transform: translateX(-50%);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         #toast.show {
             visibility: visible;
-            animation: fadein_toast 0.5s, fadeout_toast 0.5s 2.5s;
+            animation: fadein_toast 0.4s ease-out, fadeout_toast 0.4s ease-in 2.6s;
         }
 
         @keyframes fadein_toast {
-            from {bottom: 0; opacity: 0;}
-            to {bottom: 30px; opacity: 1;}
+            from {bottom: 20px; opacity: 0;}
+            to {bottom: 40px; opacity: 1;}
         }
 
         @keyframes fadeout_toast {
-            from {bottom: 30px; opacity: 1;}
-            to {bottom: 0; opacity: 0;}
+            from {bottom: 40px; opacity: 1;}
+            to {bottom: 20px; opacity: 0;}
         }
 
         .btn-main {
@@ -170,10 +181,10 @@
         <p class="text-[10px] mt-1">System Architecture by: <span class="text-slate-600 font-semibold uppercase">Imam Wahyu Ramadhan, S.T.</span> | <span class="text-amber-600 font-bold uppercase tracking-tighter">Project 2.0</span></p>
     </footer>
 
-    <!-- TOAST MESSAGE -->
-    <div id="toast" class="flex items-center gap-3">
-        <i data-lucide="cloud-download" class="text-amber-400 w-5 h-5"></i>
-        <span id="toastMsg">Sinkronisasi Data...</span>
+    <!-- TOAST MESSAGE (Diperkecil) -->
+    <div id="toast">
+        <i data-lucide="check-circle-2" class="text-emerald-400 w-4 h-4"></i>
+        <span id="toastMsg">Data Diperbarui</span>
     </div>
 
     <script>
@@ -300,6 +311,10 @@
             const t = document.getElementById("toast");
             const msg = document.getElementById("toastMsg");
             if (msg) msg.innerText = message;
+            
+            // Re-render icons for the toast icon
+            lucide.createIcons();
+            
             t.classList.add("show");
             setTimeout(() => t.classList.remove("show"), 3000);
         }
