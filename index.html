@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WORKSHOP LIVE MONITOR - PT TSI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+        
+        .color-primary { background-color: #1E3A8A; }
+        .text-primary { color: #1E3A8A; }
+        
+        .fade-in { 
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border-bottom: 6px solid transparent;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .active-menu {
+            background-color: #f1f5f9 !important;
+            border-bottom-color: #D97706 !important;
+        }
+
+        #toast {
+            visibility: hidden;
+            min-width: 300px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: center;
+            border-radius: 12px;
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein_toast 0.5s, fadeout_toast 0.5s 2.5s;
+        }
+
+        @keyframes fadein_toast {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout_toast {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center p-4 sm:p-8">
+
+    <main class="w-full max-w-5xl glass-panel p-6 sm:p-10 rounded-3xl shadow-2xl relative fade-in">
+        <!-- Header Section -->
+        <header id="mainHeader" class="w-full mb-10 pb-6 border-b-2 border-slate-100 flex flex-col items-center">
+            <div class="mb-4">
+                <div class="w-24 h-24 flex items-center justify-center bg-white rounded-2xl shadow-sm overflow-hidden p-2">
+                    <!-- Menggunakan default_logo.png dari folder yang sama -->
+                    <img src="default_logo.png" alt="Logo PT TSI" class="w-full h-full object-contain" onerror="this.src='https://ui-avatars.com/api/?name=TSI&background=1E3A8A&color=fff&bold=true'">
+                </div>
+            </div>
+            
+            <div class="color-primary text-white px-8 py-4 rounded-2xl shadow-lg flex flex-col items-center gap-1">
+                <h1 class="text-xl sm:text-2xl font-black uppercase tracking-[0.1em] text-center">
+                    WORKSHOP LIVE MONITOR
+                </h1>
+                <div class="h-0.5 w-16 bg-amber-500 rounded-full my-1"></div>
+                <h2 class="text-sm sm:text-lg font-bold uppercase tracking-widest text-blue-100 text-center">
+                    PAPERLESS PROJECT PT TSI
+                </h2>
+            </div>
+            <div class="mt-3 text-[10px] font-bold text-slate-400 tracking-[0.3em] uppercase">
+                Digitalization Initiative v2.0
+            </div>
+        </header>
+
+        <!-- Navigation Menus -->
+        <nav class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <div onclick="loadAndSwitch('activity')" id="menu-activity" class="menu-card bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center text-center gap-3">
+                <div class="w-12 h-12 bg-blue-100 text-blue-900 rounded-xl flex items-center justify-center">
+                    <i data-lucide="wrench" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-800">Mechanic Activity</span>
+            </div>
+
+            <div onclick="loadAndSwitch('breakdown')" id="menu-breakdown" class="menu-card bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center text-center gap-3">
+                <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="alert-octagon" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-800">Breakdown Unit</span>
+            </div>
+
+            <div onclick="loadAndSwitch('greasing')" id="menu-greasing" class="menu-card bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center text-center gap-3">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="droplet" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-800">Greasing Schedule</span>
+            </div>
+
+            <div onclick="loadAndSwitch('manpower')" id="menu-manpower" class="menu-card bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center text-center gap-3">
+                <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="users" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-800">Man Power</span>
+            </div>
+        </nav>
+
+        <!-- Content Area -->
+        <section id="contentDisplay" class="fade-in min-h-[400px]">
+            <div class="flex items-center justify-center p-20 text-slate-400">
+                <div class="flex flex-col items-center gap-4 text-center">
+                    <div class="animate-spin h-10 w-10 border-4 border-blue-900 border-t-transparent rounded-full"></div>
+                    <span class="font-bold text-xs uppercase tracking-widest">Inisialisasi Koneksi Spreadsheet...</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="mt-8 text-center text-slate-400 px-4 pb-8">
+        <p class="font-bold text-slate-500 tracking-tight uppercase">&copy; 2026 Paperless Project - PT TSI. All rights reserved.</p>
+        <p class="text-[10px] mt-1">System Architecture by: <span class="text-slate-600 font-semibold uppercase">Imam Wahyu Ramadhan, S.T.</span> | <span class="text-amber-600 font-bold uppercase tracking-tighter">Project 2.0</span></p>
+    </footer>
+
+    <!-- TOAST MESSAGE -->
+    <div id="toast" class="flex items-center gap-3">
+        <i data-lucide="cloud-download" class="text-amber-400 w-5 h-5"></i>
+        <span id="toastMsg">Sinkronisasi Data...</span>
+    </div>
+
+    <script>
+        const SOURCES = {
+            activity: {
+                url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqSJTRuysbLLGPG_Ykv-5nXGLUI5OuXjQsCr104wK7-OcQBZBNRKxYz2k5mbGS0v0XXmdSZ530IqtN/pub?gid=1136571371&single=true&output=csv",
+                title: "Mechanic Activity Monitor",
+                accent: "blue"
+            },
+            breakdown: {
+                url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSW5_mSOfx6UNoSQ6daeyJ73kVV84sgoh5BLAoO8ax0wd6V0u_oJm0eNSKxUlkIsrQfQb8vUsCXvv8v/pub?gid=1847043830&single=true&output=csv",
+                title: "Breakdown Unit List",
+                accent: "red"
+            },
+            greasing: {
+                url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8WCtvRPjcTNzVgNC2Ol7spdNluPpZrla3VTkY7o-ShcwPateOOvDj8-s79a5Nxc3oIfu37QUpV5pr/pub?gid=0&single=true&output=csv",
+                title: "Greasing Schedule",
+                accent: "emerald"
+            },
+            manpower: {
+                url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS0sbGVLaVP05SLGHP_PeNxbWGzpYTw2UTSWMU6wS3sjhhIFeBC4-f-S3NOQlRPnCUrSOzX-ZJAyEGf/pub?gid=1411060013&single=true&output=csv",
+                title: "Man Power List",
+                accent: "amber"
+            }
+        };
+
+        // Fungsi Helper untuk Parsing CSV sederhana
+        function parseCSV(csvText) {
+            const lines = csvText.split(/\r?\n/);
+            return lines.filter(line => line.trim() !== "").map(line => {
+                return line.split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim());
+            });
+        }
+
+        async function loadAndSwitch(viewId) {
+            const config = SOURCES[viewId];
+            const container = document.getElementById('contentDisplay');
+            
+            // UI Update: Active Menu
+            document.querySelectorAll('.menu-card').forEach(m => m.classList.remove('active-menu'));
+            document.getElementById(`menu-${viewId}`).classList.add('active-menu');
+
+            // Show Loading
+            container.innerHTML = `
+                <div class="flex items-center justify-center p-20 animate-pulse">
+                    <div class="text-center">
+                        <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-4 text-slate-300"></i>
+                        <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Mengambil Data ${config.title}...</span>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+
+            try {
+                const response = await fetch(config.url);
+                if (!response.ok) throw new Error('Network error');
+                
+                const csvData = await response.text();
+                const rows = parseCSV(csvData);
+
+                if (rows.length === 0) {
+                    container.innerHTML = `<div class="p-10 text-center text-slate-400">Data Kosong.</div>`;
+                    return;
+                }
+
+                const headers = rows[0];
+                const bodyRows = rows.slice(1);
+
+                renderTable(config.title, headers, bodyRows, config.accent);
+                showToast(`Data ${viewId} diperbarui`);
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `
+                    <div class="p-10 text-center border-2 border-dashed border-red-100 rounded-3xl">
+                        <i data-lucide="wifi-off" class="w-10 h-10 text-red-300 mx-auto mb-4"></i>
+                        <h4 class="text-red-500 font-bold uppercase text-sm">Gagal Mengambil Data</h4>
+                        <p class="text-slate-400 text-xs mt-2">Pastikan koneksi internet aktif atau link spreadsheet valid.</p>
+                        <button onclick="loadAndSwitch('${viewId}')" class="mt-4 px-4 py-2 bg-slate-800 text-white text-[10px] font-bold rounded-lg uppercase">Coba Lagi</button>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        }
+
+        function renderTable(title, headers, rows, accentColor) {
+            const container = document.getElementById('contentDisplay');
+            
+            const accentBg = {
+                blue: 'bg-blue-600',
+                red: 'bg-red-600',
+                emerald: 'bg-emerald-600',
+                amber: 'bg-amber-600'
+            }[accentColor];
+
+            let tableHtml = `
+                <div class="fade-in">
+                    <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <div class="w-1.5 h-4 ${accentBg} rounded-full"></div> ${title}
+                        <span class="ml-auto text-[9px] font-normal text-slate-400 normal-case tracking-normal italic">Total: ${rows.length} baris</span>
+                    </h3>
+                    <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-800 text-white uppercase text-[10px] tracking-[0.15em] font-bold">
+                                <tr>
+                                    ${headers.map(h => `<th class="px-6 py-4 whitespace-nowrap">${h}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${rows.map(row => `
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        ${row.map((cell, idx) => {
+                                            const isFirst = idx === 0;
+                                            return `<td class="px-6 py-4 text-xs ${isFirst ? 'font-black text-slate-900' : 'text-slate-600 font-medium'}">${cell || '-'}</td>`;
+                                        }).join('')}
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = tableHtml;
+        }
+
+        function showToast(message) {
+            const t = document.getElementById("toast");
+            document.getElementById("toastMsg").innerText = message;
+            t.classList.add("show");
+            setTimeout(() => t.classList.remove("show"), 3000);
+        }
+
+        window.onload = () => {
+            lucide.createIcons();
+            loadAndSwitch('activity');
+        };
+    </script>
+</body>
+</html>
